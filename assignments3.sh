@@ -5,19 +5,17 @@ function buildStructure()
 {
     echo "Building the structure"
     mkdir root
-    cd root
-    mkdir users
-    mkdir files
-    mkdir bin
-    mkdir lib
+    mkdir -p root/(users,files,bin,lib)
 }
 
 # A function to create five directories for five users in the Users directory
 function createUserDirectories()
 {
+    cd root
     cd users
     echo "Creating user directories"
     for (( i = 1; i <= 5; i++ ))
+        do
         mkdir user$i
     done
     # User directories are named as User1, User2, User3, User4, User5
@@ -28,7 +26,7 @@ function createUserDirectories()
 function createFileDirectories()
 {
     echo "Creating files ....."
-
+    cd /root/files
     # Files must be of types txt, jpg, gz, iso, log, exe only
     types=(".txt", ".jpg", ".gz", ".iso", ".exe")
     # The text files MUST NOT be empty (i.e. they must contain some randome texts)
@@ -36,8 +34,8 @@ function createFileDirectories()
     # To generate a random number, use the command $RANDOM
     # To generate a random number between two numbers, use the command $(( RANDOM % (max - min) + min ))
     for (( i = 1; i <= 20; i++ ))
-        randomNum=$RANDOM%6
-        vim $i.$randomNum
+        randomNum='expr (($RANDOM%6))'
+        touch file$i.${types[$randomNum]}
     done
     
  
@@ -63,7 +61,8 @@ function sendMessage()
 function cleanUp()
 {
     echo "Cleaning up files"
-    
+    cd root/files
+    find /root/files -iname "*.exe" -exec rm {} \;
 }
 
 
@@ -71,7 +70,7 @@ function cleanUp()
 function displayStructure()
 {
     echo "Displaying the structure"
-        
+    tree $root
 }
 
 
@@ -88,3 +87,8 @@ function displayStructure()
 
 # Call the functions in the order that they are written in the script above
 
+buildStructure
+createUserDirectories
+createFileDirectories
+cleanUp
+displayStructure
